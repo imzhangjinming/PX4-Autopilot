@@ -220,12 +220,12 @@ protected:
 	 * Change behaviour after external mission update.
 	 * @param[in] has_mission_items_changed flag if the mission items have been changed.
 	 */
-	virtual void onMissionUpdate(bool has_mission_items_changed);
+	void onMissionUpdate(bool has_mission_items_changed);
 
 	/**
 	 * Update mission topic
 	 */
-	virtual void update_mission();
+	void update_mission();
 
 	/**
 	 * Move on to next mission item or switch to loiter
@@ -239,6 +239,13 @@ protected:
 	 * as terrain following, etc.
 	 */
 	void set_mission_items();
+
+	/**
+	 * @brief Load current mission item
+	 *
+	 * Load current mission item from dataman cache.
+	 */
+	void loadCurrentMissionItem();
 
 	/**
 	 * Set the mission result

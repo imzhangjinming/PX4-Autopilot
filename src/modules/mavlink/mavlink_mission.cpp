@@ -472,7 +472,7 @@ MavlinkMissionManager::send()
 				} else {
 					_mavlink->send_statustext_critical("ERROR: wp index out of bounds\t");
 					events::send<uint16_t, uint16_t>(events::ID("mavlink_mission_wp_index_out_of_bounds"), events::Log::Error,
-									 "Waypoint index out of bounds ({1} \\< {2})", mission_result.seq_current, mission_result.seq_total);
+									 "Waypoint index out of bounds (current {1} \\>= total {2})", mission_result.seq_current, mission_result.seq_total);
 				}
 			}
 		}

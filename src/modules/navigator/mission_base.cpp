@@ -115,13 +115,13 @@ void MissionBase::updateMavlinkMission()
 			/* Check if it was updated externally*/
 			if (new_mission.timestamp > _mission.timestamp) {
 				bool mission_items_changed = (new_mission.mission_update_counter != _mission.mission_update_counter);
-				_mission = new_mission;
-				_is_current_planned_mission_item_valid = true;
 
-				if (mission_items_changed) {
-					_dataman_cache.invalidate();
-					_load_mission_index = -1;
+				if (new_mission.current_seq < 0) {
+					new_mission.current_seq = math::max(math::min(_mission.current_seq, static_cast<int32_t>(new_mission.count) - 1),
+									    INT32_C(0));
 				}
+
+				_mission = new_mission;
 
 				onMissionUpdate(mission_items_changed);
 			}
@@ -131,7 +131,12 @@ void MissionBase::updateMavlinkMission()
 
 void MissionBase::onMissionUpdate(bool has_mission_items_changed)
 {
+	_is_current_planned_mission_item_valid = _mission.count > 0;
+
 	if (has_mission_items_changed) {
+		_dataman_cache.invalidate();
+		_load_mission_index = -1;
+
 		check_mission_valid();
 
 		// only warn if the check failed on merit
@@ -223,12 +228,9 @@ MissionBase::on_activation()
 		updateCachedItemsUpToIndex(_mission.current_seq - 1);
 	}
 
-	int32_t resume_index;
-	size_t num_found_items{0U};
-
-
-
 	if (_inactivation_index > 0 && cameraWasTriggering()) {
+		int32_t resume_index;
+		size_t num_found_items{0U};
 		getPreviousPositionItems(_inactivation_index, &resume_index, num_found_items, 1U);
 
 		if (num_found_items == 1U) {
@@ -361,18 +363,16 @@ MissionBase::on_active()
 void MissionBase::update_mission()
 {
 	if (_mission.count == 0u || !_is_current_planned_mission_item_valid || !_navigator->get_mission_result()->valid) {
-		if (_mission_type == MissionType::MISSION_TYPE_MISSION) {
-			if (_land_detected_sub.get().landed) {
-				/* landed, refusing to take off without a mission */
-				mavlink_log_critical(_navigator->get_mavlink_log_pub(), "No valid mission available, refusing takeoff\t");
-				events::send(events::ID("mission_not_valid_refuse"), {events::Log::Error, events::LogInternal::Disabled},
-					     "No valid mission available, refusing takeoff");
+		if (_land_detected_sub.get().landed) {
+			/* landed, refusing to take off without a mission */
+			mavlink_log_critical(_navigator->get_mavlink_log_pub(), "No valid mission available, refusing takeoff\t");
+			events::send(events::ID("mission_not_valid_refuse"), {events::Log::Error, events::LogInternal::Disabled},
+				     "No valid mission available, refusing takeoff");
 
-			} else {
-				mavlink_log_critical(_navigator->get_mavlink_log_pub(), "No valid mission available, loitering\t");
-				events::send(events::ID("mission_not_valid_loiter"), {events::Log::Error, events::LogInternal::Disabled},
-					     "No valid mission available, loitering");
-			}
+		} else {
+			mavlink_log_critical(_navigator->get_mavlink_log_pub(), "No valid mission available, loitering\t");
+			events::send(events::ID("mission_not_valid_loiter"), {events::Log::Error, events::LogInternal::Disabled},
+				     "No valid mission available, loitering");
 		}
 
 		_mission_type = MissionType::MISSION_TYPE_NONE;
@@ -455,21 +455,26 @@ MissionBase::set_mission_items()
 {
 	if (_is_current_planned_mission_item_valid) {
 		/* By default set the mission item to the current planned mission item. Depending on request, it can be altered. */
-		const dm_item_t dm_item = static_cast<dm_item_t>(_mission.dataman_id);
-		bool success = _dataman_cache.loadWait(dm_item, _mission.current_seq, reinterpret_cast<uint8_t *>(&_mission_item),
-						       sizeof(mission_item_s), MAX_DATAMAN_LOAD_WAIT);
-
-		if (!success) {
-			mavlink_log_critical(_navigator->get_mavlink_log_pub(), "Mission item could not be set.\t");
-			events::send(events::ID("mission_item_set_failed"), events::Log::Error,
-				     "Mission item could not be set");
-		}
+		loadCurrentMissionItem();
 
 		setActiveMissionItems();
 
 	} else {
 		setEndOfMissionItems();
 		_navigator->mode_completed(vehicle_status_s::NAVIGATION_STATE_AUTO_MISSION);
+	}
+}
+
+void MissionBase::loadCurrentMissionItem()
+{
+	const dm_item_t dm_item = static_cast<dm_item_t>(_mission.dataman_id);
+	bool success = _dataman_cache.loadWait(dm_item, _mission.current_seq, reinterpret_cast<uint8_t *>(&_mission_item),
+					       sizeof(mission_item_s), MAX_DATAMAN_LOAD_WAIT);
+
+	if (!success) {
+		mavlink_log_critical(_navigator->get_mavlink_log_pub(), "Mission item could not be set.\t");
+		events::send(events::ID("mission_item_set_failed"), events::Log::Error,
+			     "Mission item could not be set");
 	}
 }
 
@@ -588,7 +593,7 @@ MissionBase::check_mission_valid()
 		_navigator->get_mission_result()->seq_total = _mission.count;
 		_navigator->get_mission_result()->seq_reached = -1;
 		_navigator->get_mission_result()->failure = false;
-		_navigator->set_mission_result_updated();
+		set_mission_result();
 	}
 }
 
@@ -768,8 +773,7 @@ bool MissionBase::isMissionValid(mission_s &mission) const
 {
 	bool ret_val{false};
 
-	if ((mission.current_seq < mission.count) &&
-	    (mission.current_seq >= 0) &&
+	if (((mission.current_seq < mission.count) || (mission.count == 0U && mission.current_seq <= 0)) &&
 	    (mission.dataman_id == DM_KEY_WAYPOINTS_OFFBOARD_0 || mission.dataman_id == DM_KEY_WAYPOINTS_OFFBOARD_1) &&
 	    (mission.timestamp != 0u)) {
 		ret_val = true;
@@ -1028,7 +1032,7 @@ int MissionBase::setMissionToClosestItem(double lat, double lon, float alt, floa
 
 void MissionBase::resetMission()
 {
-	/* we do not need to reset mission if is already is.*/
+	/* we do not need to reset mission if is already.*/
 	if (_mission.count == 0u && isMissionValid(_mission)) {
 		return;
 	}
