@@ -816,9 +816,8 @@ int MissionBase::getNonJumpItem(int32_t &mission_index, mission_item_s &mission,
 			if ((new_mission.do_jump_current_count < new_mission.do_jump_repeat_count) && execute_jump) {
 				if (write_jumps) {
 					new_mission.do_jump_current_count++;
-
-					success = _dataman_client.writeSync(dataman_id, new_mission_index, reinterpret_cast<uint8_t *>(&new_mission),
-									    sizeof(struct mission_item_s));
+					success = _dataman_cache.writeWait(dataman_id, new_mission_index, reinterpret_cast<uint8_t *>(&new_mission),
+									   sizeof(struct mission_item_s));
 
 					if (!success) {
 						/* not supposed to happen unless the datamanager can't access the dataman */
@@ -1081,7 +1080,7 @@ void MissionBase::resetMissionJumpCounter()
 		if (mission_item.nav_cmd == NAV_CMD_DO_JUMP) {
 			mission_item.do_jump_current_count = 0u;
 
-			bool write_success = _dataman_client.writeSync(dataman_id, mission_index, reinterpret_cast<uint8_t *>(&mission_item),
+			bool write_success = _dataman_cache.writeWait(dataman_id, mission_index, reinterpret_cast<uint8_t *>(&mission_item),
 					     sizeof(struct mission_item_s));
 
 			if (!write_success) {
