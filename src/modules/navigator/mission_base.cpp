@@ -169,7 +169,6 @@ MissionBase::on_inactive()
 	parameters_update();
 
 	updateMavlinkMission();
-	updateDatamanCache();
 
 	/* Need to check the initialized mission once, have to do it here, since we need to wait for the home position. */
 	if (_navigator->home_global_position_valid() && !_initialized_mission_checked) {
