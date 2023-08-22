@@ -218,7 +218,7 @@ void RtlDirectMissionLand::handleLanding(WorkItemType &new_work_item_type)
 			_mission_item.time_inside = 0.0f;
 			_mission_item.vtol_back_transition = true;
 
-			pos_sp_triplet->previous.valid = false;
+			_navigator->reset_position_setpoint(pos_sp_triplet->previous);
 
 		}
 
@@ -234,7 +234,7 @@ void RtlDirectMissionLand::handleLanding(WorkItemType &new_work_item_type)
 
 			// make previous setpoint invalid, such that there will be no prev-current line following
 			// if the vehicle drifted off the path during back-transition it should just go straight to the landing point
-			pos_sp_triplet->previous.valid = false;
+			_navigator->reset_position_setpoint(pos_sp_triplet->previous);
 		}
 
 	} else if (needs_to_land) {
@@ -254,7 +254,7 @@ void RtlDirectMissionLand::handleLanding(WorkItemType &new_work_item_type)
 
 			// make previous setpoint invalid, such that there will be no prev-current line following.
 			// if the vehicle drifted off the path during back-transition it should just go straight to the landing point
-			pos_sp_triplet->previous.valid = false;
+			_navigator->reset_position_setpoint(pos_sp_triplet->previous);
 
 		}
 	}

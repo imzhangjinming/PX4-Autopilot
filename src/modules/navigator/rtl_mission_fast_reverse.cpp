@@ -215,7 +215,7 @@ void RtlMissionFastReverse::handleLanding(WorkItemType &new_work_item_type)
 
 				// make previous setpoint invalid, such that there will be no prev-current line following
 				// if the vehicle drifted off the path during back-transition it should just go straight to the landing point
-				pos_sp_triplet->previous.valid = false;
+				_navigator->reset_position_setpoint(pos_sp_triplet->previous);
 			}
 
 		} else if ((_work_item_type == WorkItemType::WORK_ITEM_TYPE_TAKEOFF ||
@@ -238,12 +238,12 @@ void RtlMissionFastReverse::handleLanding(WorkItemType &new_work_item_type)
 
 				// make previous setpoint invalid, such that there will be no prev-current line following.
 				// if the vehicle drifted off the path during back-transition it should just go straight to the landing point
-				pos_sp_triplet->previous.valid = false;
+				_navigator->reset_position_setpoint(pos_sp_triplet->previous);
 
 			} else {
 				_mission_item.altitude = _home_pos_sub.get().alt;
 				_mission_item.altitude_is_relative = false;
-				pos_sp_triplet->previous.valid = false;
+				_navigator->reset_position_setpoint(pos_sp_triplet->previous);
 			}
 		}
 	}
