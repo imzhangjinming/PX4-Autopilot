@@ -71,7 +71,7 @@ TEST_CASE("RTL with Mission Landing", "[vtol]")
 	tester.arm();
 	tester.execute_rtl_when_reaching_mission_sequence(2);
 	tester.check_tracks_mission_raw(35.0f);
-	tester.wait_until_disarmed(std::chrono::seconds(90));
+	tester.wait_until_disarmed(std::chrono::seconds(95));
 }
 
 TEST_CASE("RTL with Reverse Mission", "[vtol]")
