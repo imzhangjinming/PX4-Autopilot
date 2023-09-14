@@ -31,24 +31,30 @@
  *
  ****************************************************************************/
 
-#include "WorkItemExample.hpp"
+#include "JetControl.hpp"
 
-WorkItemExample::WorkItemExample() :
+JetControl::JetControl() :
 	ModuleParams(nullptr),
 	ScheduledWorkItem(MODULE_NAME, px4::wq_configurations::test1)
 {
 }
 
-WorkItemExample::~WorkItemExample()
+JetControl::~JetControl()
 {
 	perf_free(_loop_perf);
 	perf_free(_loop_interval_perf);
 }
 
-bool WorkItemExample::init()
+bool JetControl::init()
 {
-	// execute Run() on every sensor_accel publication
-	if (!_sensor_accel_sub.registerCallback()) {
+	// // execute Run() on every sensor_accel publication
+	// if (!_sensor_accel_sub.registerCallback()) {
+	// 	PX4_ERR("callback registration failed");
+	// 	return false;
+	// }
+
+	// execute Run() on every manual_control_setpoint publication
+	if (!_manual_control_setpoint_sub.registerCallback()){
 		PX4_ERR("callback registration failed");
 		return false;
 	}
@@ -59,7 +65,7 @@ bool WorkItemExample::init()
 	return true;
 }
 
-void WorkItemExample::Run()
+void JetControl::Run()
 {
 	if (should_exit()) {
 		ScheduleClear();
@@ -100,36 +106,76 @@ void WorkItemExample::Run()
 	}
 
 
-	// Example
-	//  grab latest accelerometer data
-	if (_sensor_accel_sub.updated()) {
-		sensor_accel_s accel;
+	// // Example
+	// //  grab latest accelerometer data
+	// if (_sensor_accel_sub.updated()) {
+	// 	sensor_accel_s accel;
 
-		if (_sensor_accel_sub.copy(&accel)) {
-			// DO WORK
+	// 	if (_sensor_accel_sub.copy(&accel)) {
+	// 		// DO WORK
 
-			// access parameter value (SYS_AUTOSTART)
-			if (_param_sys_autostart.get() == 1234) {
-				// do something if SYS_AUTOSTART is 1234
+	// 		// access parameter value (SYS_AUTOSTART)
+	// 		if (_param_sys_autostart.get() == 1234) {
+	// 			// do something if SYS_AUTOSTART is 1234
+	// 		}
+	// 	}
+	// }
+
+	if (_manual_control_setpoint_sub.updated()) {
+		manual_control_setpoint_s manual_control_setpoint;
+		if (_manual_control_setpoint_sub.copy(&manual_control_setpoint)) {
+			actuator_jets_s actuator_jets{};
+			if (_param_jet_use_rc_aux.get() != 0) {
+				float aux_val;
+				switch(_param_jet_use_rc_aux.get()){
+					case 1:
+						aux_val = manual_control_setpoint.aux1;break;
+					case 2:
+						aux_val = manual_control_setpoint.aux2;break;
+					case 3:
+						aux_val = manual_control_setpoint.aux3;break;
+					case 4:
+						aux_val = manual_control_setpoint.aux4;break;
+					case 5:
+						aux_val = manual_control_setpoint.aux5;break;
+					case 6:
+						aux_val = manual_control_setpoint.aux6;break;
+					default:
+						aux_val = -1;
+						PX4_ERR("invalid rc aux number");
+				}
+
+				for (size_t i = 0; i < actuator_jets_s::NUM_CONTROLS; i++){
+					actuator_jets.control[i] = aux_val;
+				}
+
+				// TODO:
+				//	check vehicle arm state;
+				//	enable jets publish in prearmed state;
+
+				actuator_jets.timestamp = hrt_absolute_time();
+				actuator_jets.timestamp_sample = actuator_jets.timestamp;
+				_actuator_jets_pub.publish(actuator_jets);
+			}else{
+				// do nothing
 			}
 		}
 	}
 
-
-	// Example
-	//  publish some data
-	orb_test_s data{};
-	data.val = 314159;
-	data.timestamp = hrt_absolute_time();
-	_orb_test_pub.publish(data);
+	// // Example
+	// //  publish some data
+	// orb_test_s data{};
+	// data.val = 314159;
+	// data.timestamp = hrt_absolute_time();
+	// _orb_test_pub.publish(data);
 
 
 	perf_end(_loop_perf);
 }
 
-int WorkItemExample::task_spawn(int argc, char *argv[])
+int JetControl::task_spawn(int argc, char *argv[])
 {
-	WorkItemExample *instance = new WorkItemExample();
+	JetControl *instance = new JetControl();
 
 	if (instance) {
 		_object.store(instance);
@@ -150,19 +196,19 @@ int WorkItemExample::task_spawn(int argc, char *argv[])
 	return PX4_ERROR;
 }
 
-int WorkItemExample::print_status()
+int JetControl::print_status()
 {
 	perf_print_counter(_loop_perf);
 	perf_print_counter(_loop_interval_perf);
 	return 0;
 }
 
-int WorkItemExample::custom_command(int argc, char *argv[])
+int JetControl::custom_command(int argc, char *argv[])
 {
 	return print_usage("unknown command");
 }
 
-int WorkItemExample::print_usage(const char *reason)
+int JetControl::print_usage(const char *reason)
 {
 	if (reason) {
 		PX4_WARN("%s\n", reason);
@@ -175,14 +221,14 @@ Example of a simple module running out of a work queue.
 
 )DESCR_STR");
 
-	PRINT_MODULE_USAGE_NAME("work_item_example", "template");
+	PRINT_MODULE_USAGE_NAME("jet_control", "template");
 	PRINT_MODULE_USAGE_COMMAND("start");
 	PRINT_MODULE_USAGE_DEFAULT_COMMANDS();
 
 	return 0;
 }
 
-extern "C" __EXPORT int work_item_example_main(int argc, char *argv[])
+extern "C" __EXPORT int jet_control_main(int argc, char *argv[])
 {
-	return WorkItemExample::main(argc, argv);
+	return JetControl::main(argc, argv);
 }

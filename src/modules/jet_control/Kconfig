@@ -1,0 +1,5 @@
+menuconfig MODULES_JET_CONTROL
+	bool "jet_control"
+	default y
+	---help---
+		Enable support for jet_control

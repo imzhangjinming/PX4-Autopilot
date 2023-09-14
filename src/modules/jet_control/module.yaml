@@ -1,0 +1,21 @@
+module name: Jet Control
+
+parameters:
+    - group: Jet
+      definitions:
+        JET_USE_RC_AUX:
+          description:
+                short: Jet RC_MAP_AUX number selection.
+                long: |
+                  Defines which RC AUX channel Jet control will use. See RC_MAP_AUXx
+                  parameters for more info.
+          type: enum
+          values:
+              0: '0'
+              1: '1'
+              2: '2'
+              3: '3'
+              4: '4'
+              5: '5'
+              6: '6'
+          default: 4

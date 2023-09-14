@@ -45,18 +45,20 @@
 #include <uORB/Publication.hpp>
 #include <uORB/Subscription.hpp>
 #include <uORB/SubscriptionCallback.hpp>
-#include <uORB/topics/orb_test.h>
+// #include <uORB/topics/orb_test.h>
 #include <uORB/topics/parameter_update.h>
-#include <uORB/topics/sensor_accel.h>
+// #include <uORB/topics/sensor_accel.h>
 #include <uORB/topics/vehicle_status.h>
+#include <uORB/topics/actuator_jets.h>
+#include <uORB/topics/manual_control_setpoint.h>
 
 using namespace time_literals;
 
-class WorkItemExample : public ModuleBase<WorkItemExample>, public ModuleParams, public px4::ScheduledWorkItem
+class JetControl : public ModuleBase<JetControl>, public ModuleParams, public px4::ScheduledWorkItem
 {
 public:
-	WorkItemExample();
-	~WorkItemExample() override;
+	JetControl();
+	~JetControl() override;
 
 	/** @see ModuleBase */
 	static int task_spawn(int argc, char *argv[]);
@@ -75,12 +77,14 @@ private:
 	void Run() override;
 
 	// Publications
-	uORB::Publication<orb_test_s> _orb_test_pub{ORB_ID(orb_test)};
+	// uORB::Publication<orb_test_s> _orb_test_pub{ORB_ID(orb_test)};
+	uORB::Publication<actuator_jets_s> _actuator_jets_pub{ORB_ID(actuator_jets)};
 
 	// Subscriptions
-	uORB::SubscriptionCallbackWorkItem _sensor_accel_sub{this, ORB_ID(sensor_accel)};        // subscription that schedules WorkItemExample when updated
+	// uORB::SubscriptionCallbackWorkItem _sensor_accel_sub{this, ORB_ID(sensor_accel)};        // subscription that schedules WorkItemExample when updated
 	uORB::SubscriptionInterval         _parameter_update_sub{ORB_ID(parameter_update), 1_s}; // subscription limited to 1 Hz updates
 	uORB::Subscription                 _vehicle_status_sub{ORB_ID(vehicle_status)};          // regular subscription for additional data
+	uORB::SubscriptionCallbackWorkItem _manual_control_setpoint_sub{this, ORB_ID(manual_control_setpoint)};
 
 	// Performance (perf) counters
 	perf_counter_t	_loop_perf{perf_alloc(PC_ELAPSED, MODULE_NAME": cycle")};
@@ -88,8 +92,9 @@ private:
 
 	// Parameters
 	DEFINE_PARAMETERS(
-		(ParamInt<px4::params::SYS_AUTOSTART>) _param_sys_autostart,   /**< example parameter */
-		(ParamInt<px4::params::SYS_AUTOCONFIG>) _param_sys_autoconfig  /**< another parameter */
+		// (ParamInt<px4::params::SYS_AUTOSTART>) _param_sys_autostart,   /**< example parameter */
+		// (ParamInt<px4::params::SYS_AUTOCONFIG>) _param_sys_autoconfig,  /**< another parameter */
+		(ParamInt<px4::params::JET_USE_RC_AUX>) _param_jet_use_rc_aux
 	)
 
 

@@ -32,14 +32,16 @@
 ############################################################################
 
 px4_add_module(
-	MODULE examples__work_item
-	MAIN work_item_example
+	MODULE modules__jet_control
+	MAIN jet_control
 	COMPILE_FLAGS
 		#-DDEBUG_BUILD   # uncomment for PX4_DEBUG output
 		#-O0             # uncomment when debugging
 	SRCS
-		WorkItemExample.cpp
-		WorkItemExample.hpp
+		JetControl.cpp
+		JetControl.hpp
+	MODULE_CONFIG
+		module.yaml
 	DEPENDS
 		px4_work_queue
 	)
