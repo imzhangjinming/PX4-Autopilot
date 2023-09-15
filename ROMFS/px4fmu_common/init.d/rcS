@@ -530,6 +530,14 @@ else
 		fi
 	fi
 
+	#
+	# Check if jet control is enabled
+	#
+	if param greater JET_USE_RC_AUX 0
+	then
+		jet_control start
+	fi
+
 #
 # End of autostart.
 #
