@@ -57,7 +57,7 @@
 class UavcanEscController
 {
 public:
-	static constexpr int MAX_ACTUATORS = esc_status_s::CONNECTED_ESC_MAX;
+	static constexpr int MAX_ACTUATORS = OutputModuleInterface::MAX_ACTUATORS; // esc_status_s::CONNECTED_ESC_MAX
 	static constexpr unsigned MAX_RATE_HZ = 400;
 	static constexpr uint16_t DISARMED_OUTPUT_VALUE = UINT16_MAX;
 
@@ -78,28 +78,28 @@ public:
 
 	static int max_output_value() { return uavcan::equipment::esc::RawCommand::FieldTypes::cmd::RawValueType::max(); }
 
-	esc_status_s &esc_status() { return _esc_status; }
+	// esc_status_s &esc_status() { return _esc_status; }
 
 private:
 	/**
 	 * ESC status message reception will be reported via this callback.
 	 */
-	void esc_status_sub_cb(const uavcan::ReceivedDataStructure<uavcan::equipment::esc::Status> &msg);
+	// void esc_status_sub_cb(const uavcan::ReceivedDataStructure<uavcan::equipment::esc::Status> &msg);
 
 	/**
 	 * Checks all the ESCs freshness based on timestamp, if an ESC exceeds the timeout then is flagged offline.
 	 */
-	uint8_t check_escs_status();
+	// uint8_t check_escs_status();
 
-	typedef uavcan::MethodBinder<UavcanEscController *,
-		void (UavcanEscController::*)(const uavcan::ReceivedDataStructure<uavcan::equipment::esc::Status>&)> StatusCbBinder;
+	// typedef uavcan::MethodBinder<UavcanEscController *,
+	// 	void (UavcanEscController::*)(const uavcan::ReceivedDataStructure<uavcan::equipment::esc::Status>&)> StatusCbBinder;
 
 	typedef uavcan::MethodBinder<UavcanEscController *,
 		void (UavcanEscController::*)(const uavcan::TimerEvent &)> TimerCbBinder;
 
-	esc_status_s	_esc_status{};
+	// esc_status_s	_esc_status{};
 
-	uORB::PublicationMulti<esc_status_s> _esc_status_pub{ORB_ID(esc_status)};
+	// uORB::PublicationMulti<esc_status_s> _esc_status_pub{ORB_ID(esc_status)};
 
 	uint8_t		_rotor_count{0};
 
@@ -109,7 +109,7 @@ private:
 	uavcan::MonotonicTime							_prev_cmd_pub;   ///< rate limiting
 	uavcan::INode								&_node;
 	uavcan::Publisher<uavcan::equipment::esc::RawCommand>			_uavcan_pub_raw_cmd;
-	uavcan::Subscriber<uavcan::equipment::esc::Status, StatusCbBinder>	_uavcan_sub_status;
+	// uavcan::Subscriber<uavcan::equipment::esc::Status, StatusCbBinder>	_uavcan_sub_status;
 
 	/*
 	 * ESC states

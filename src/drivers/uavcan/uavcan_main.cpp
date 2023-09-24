@@ -952,9 +952,9 @@ void UavcanMixingInterfaceESC::mixerChanged()
 	for (unsigned i = 0; i < MAX_ACTUATORS; ++i) {
 		rotor_count += _mixing_output.isFunctionSet(i);
 
-		if (i < esc_status_s::CONNECTED_ESC_MAX) {
-			_esc_controller.esc_status().esc[i].actuator_function = (uint8_t)_mixing_output.outputFunction(i);
-		}
+		// if (i < esc_status_s::CONNECTED_ESC_MAX) {
+		// 	_esc_controller.esc_status().esc[i].actuator_function = (uint8_t)_mixing_output.outputFunction(i);
+		// }
 	}
 
 	_esc_controller.set_rotor_count(rotor_count);
