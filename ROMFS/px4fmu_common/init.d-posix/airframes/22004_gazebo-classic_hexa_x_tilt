@@ -1,0 +1,101 @@
+#!/bin/sh
+#
+# @name Hexarotor x with tilted arms
+#
+# @url http://theairlab.org/
+#
+# @type Tilt-Hexarotor
+# @class Copter
+#
+# @output AUX1 feed-through of RC AUX1 channel
+# @output AUX2 feed-through of RC AUX2 channel
+# @output AUX3 feed-through of RC AUX3 channel
+#
+# @maintainer Azarakhsh Keipour <keipour@cmu.edu>
+#
+
+. ${R}etc/init.d/rc.mc_defaults
+
+param set-default MAV_TYPE 13
+
+# param set-default MC_PITCHRATE_P 0.1
+# param set-default MC_ROLLRATE_P 0.1
+# param set-default MC_YAWRATE_P 0.08
+# param set-default MPC_Z_VEL_I 0.15
+# param set-default MPC_Z_VEL_P 0.3
+# param set-default MC_PITCHRATE_MAX 20.0
+# param set-default MC_ROLLRATE_MAX 20.0
+# param set-default MC_YAWRATE_MAX 60.0
+# param set-default MPC_ACC_DOWN_MAX 2
+# param set-default MPC_ACC_HOR 0.5
+# param set-default MPC_ACC_HOR_MAX 2
+# param set-default MPC_ACC_UP_MAX 2
+# param set-default MPC_XY_VEL_P 0.13
+# param set-default MPC_XY_VEL_MAX 4
+
+param set-default MC_PITCHRATE_P 0.098
+param set-default MC_PITCHRATE_I 0.135
+param set-default MC_PITCHRATE_D 0.0025
+
+param set-default MC_ROLLRATE_P 0.099
+param set-default MC_ROLLRATE_I 0.135
+param set-default MC_ROLLRATE_D 0.0025
+
+param set-default MC_YAWRATE_P 0.03
+param set-default MC_YAWRATE_I 0.3
+param set-default MC_YAWRATE_D 0.0
+
+param set-default MC_YAW_P 6.50
+
+param set-default RTL_DESCEND_ALT 5.0
+param set-default RTL_LAND_DELAY 5
+
+param set-default SDLOG_PROFILE 179
+
+# param set OMNI_ATT_MODE 2
+# param set OMNI_DFC_MAX_THR 0.20
+
+param set-default CA_ROTOR0_PX 0.0
+param set-default CA_ROTOR0_PY 1.0
+param set-default CA_ROTOR0_PZ 0.0
+param set-default CA_ROTOR0_AX 0.5
+param set-default CA_ROTOR0_AY 0.0
+param set-default CA_ROTOR0_AZ -0.866025
+param set-default CA_ROTOR0_KM -0.05
+
+param set-default CA_ROTOR1_PX 0.0
+param set-default CA_ROTOR1_PY -1.0
+param set-default CA_ROTOR1_PZ 0.0
+param set-default CA_ROTOR1_AX 0.5
+param set-default CA_ROTOR1_AY 0.0
+param set-default CA_ROTOR1_AZ -0.866025
+
+param set-default CA_ROTOR2_PX 0.866025
+param set-default CA_ROTOR2_PY -0.5
+param set-default CA_ROTOR2_PZ 0.0
+param set-default CA_ROTOR2_AX -0.25
+param set-default CA_ROTOR2_AY -0.4330125
+param set-default CA_ROTOR2_AZ -0.866025
+param set-default CA_ROTOR2_KM -0.05
+
+param set-default CA_ROTOR3_PX -0.866025
+param set-default CA_ROTOR3_PY 0.5
+param set-default CA_ROTOR3_PZ 0.0
+param set-default CA_ROTOR3_AX -0.25
+param set-default CA_ROTOR3_AY -0.4330125
+param set-default CA_ROTOR3_AZ -0.866025
+
+param set-default CA_ROTOR4_PX 0.866025
+param set-default CA_ROTOR4_PY 0.5
+param set-default CA_ROTOR4_PZ 0.0
+param set-default CA_ROTOR4_AX -0.25
+param set-default CA_ROTOR4_AY 0.4330125
+param set-default CA_ROTOR4_AZ -0.866025
+
+param set-default CA_ROTOR5_PX -0.866025
+param set-default CA_ROTOR5_PY -0.5
+param set-default CA_ROTOR5_PZ 0.0
+param set-default CA_ROTOR5_AX -0.25
+param set-default CA_ROTOR5_AY 0.4330125
+param set-default CA_ROTOR5_AZ -0.866025
+param set-default CA_ROTOR5_KM -0.05
