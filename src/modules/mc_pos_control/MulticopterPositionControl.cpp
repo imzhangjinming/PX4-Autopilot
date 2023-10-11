@@ -260,6 +260,23 @@ void MulticopterPositionControl::parameters_update(bool force)
 		_takeoff.setSpoolupTime(_param_com_spoolup_time.get());
 		_takeoff.setTakeoffRampTime(_param_mpc_tko_ramp_t.get());
 		_takeoff.generateInitialRampValue(_param_mpc_z_vel_p_acc.get());
+
+
+		if (abs(_param_omni_att_tilt_angle.get() - _param_tilt_angle) > FLT_EPSILON
+		    || abs(_param_omni_att_tilt_dir.get() - _param_tilt_dir) > FLT_EPSILON) {
+			_param_tilt_angle = _param_omni_att_tilt_angle.get();
+			_param_tilt_dir = _param_omni_att_tilt_dir.get();
+			_tilt_angle = math::radians(_param_tilt_angle);
+			_tilt_dir = math::radians(_param_tilt_dir);
+		}
+
+		if (abs(_param_omni_att_roll.get() - _param_roll_angle) > FLT_EPSILON
+		    || abs(_param_omni_att_pitch.get() - _param_pitch_angle) > FLT_EPSILON) {
+			_param_roll_angle = _param_omni_att_roll.get();
+			_param_pitch_angle = _param_omni_att_pitch.get();
+			_tilt_roll = math::radians(_param_roll_angle);
+			_tilt_pitch = math::radians(_param_pitch_angle);
+		}
 	}
 }
 
@@ -358,6 +375,12 @@ void MulticopterPositionControl::Run()
 
 		_vehicle_land_detected_sub.update(&_vehicle_land_detected);
 
+		if (_vehicle_attitude_sub.updated()) {
+			_vehicle_attitude_sub.copy(&att);
+			// if (_att_sub.copy(&att) && PX4_ISFINITE(att.q[0])) {
+			// 	_states.yaw = Eulerf(Quatf(att.q)).psi();
+			// }
+		}
 		if (_param_mpc_use_hte.get()) {
 			hover_thrust_estimate_s hte;
 
@@ -536,6 +559,9 @@ void MulticopterPositionControl::Run()
 
 			_control.setState(states);
 
+			float max_hor_thrust = (_param_omni_att_mode.get() == 2) ? _param_omni_dfc_max_thr.get() : 1.0F;
+			_control.setThrustHorizontalMax(max_hor_thrust);
+
 			// Run position control
 			if (!_control.update(dt)) {
 				// Failsafe
@@ -556,8 +582,16 @@ void MulticopterPositionControl::Run()
 
 			// Publish attitude setpoint output
 			vehicle_attitude_setpoint_s attitude_setpoint{};
-			_control.getAttitudeSetpoint(attitude_setpoint);
+			omni_attitude_status_s omni_status{};
 			attitude_setpoint.timestamp = hrt_absolute_time();
+			omni_status.timestamp = attitude_setpoint.timestamp;
+			_control.getAttitudeSetpoint(matrix::Quatf(att.q), _param_omni_att_mode.get(), _param_omni_dfc_max_thr.get(),
+						     _tilt_angle, _tilt_dir, _tilt_roll, _tilt_pitch, _param_omni_att_rate.get(), _param_omni_proj_axes.get(),
+						     attitude_setpoint, omni_status);
+
+			omni_status.att_mode = _param_omni_att_mode.get();
+
+			_omni_attitude_status_pub.publish(omni_status);
 			_vehicle_attitude_setpoint_pub.publish(attitude_setpoint);
 
 		} else {

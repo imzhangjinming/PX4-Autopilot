@@ -222,6 +222,7 @@ set(msg_files
 	Wind.msg
 	YawEstimatorStatus.msg
 	ActuatorJets.msg
+	OmniAttitudeStatus.msg
 )
 list(SORT msg_files)
 
