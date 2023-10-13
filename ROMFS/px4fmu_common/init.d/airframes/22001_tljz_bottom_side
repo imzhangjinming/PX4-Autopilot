@@ -48,58 +48,58 @@ param set-default CA_ROTOR5_PZ 0
 param set-default CA_ROTOR5_KM -0.05
 
 # Side motors
-param set-default CA_ROTOR6_PX 0.2
-param set-default CA_ROTOR6_PY -0.12
+param set-default CA_ROTOR6_PX 0.27
+param set-default CA_ROTOR6_PY -0.14
 param set-default CA_ROTOR6_PZ 0
 param set-default CA_ROTOR6_AX 0
 param set-default CA_ROTOR6_AY 1.0000
 param set-default CA_ROTOR6_AZ 0
-param set-default CA_ROTOR6_KM -0.02
-param set-default CA_ROTOR6_CT 1.5
+param set-default CA_ROTOR6_KM -0.0
+param set-default CA_ROTOR6_CT 5
 
-param set-default CA_ROTOR7_PX -0.16
-param set-default CA_ROTOR7_PY 0.4
+param set-default CA_ROTOR7_PX -0.11
+param set-default CA_ROTOR7_PY 0.43
 param set-default CA_ROTOR7_PZ 0.0
 param set-default CA_ROTOR7_AX 0.0
 param set-default CA_ROTOR7_AY -1.0000
 param set-default CA_ROTOR7_AZ 0.0000
-param set-default CA_ROTOR7_KM 0.02
-param set-default CA_ROTOR7_CT 1.5
+param set-default CA_ROTOR7_KM 0.0
+param set-default CA_ROTOR7_CT 5
 
-param set-default CA_ROTOR8_PX 0.2
-param set-default CA_ROTOR8_PY 0.12
+param set-default CA_ROTOR8_PX 0.27
+param set-default CA_ROTOR8_PY 0.14
 param set-default CA_ROTOR8_PZ 0
 param set-default CA_ROTOR8_AX 0.0000
 param set-default CA_ROTOR8_AY -1.0000
 param set-default CA_ROTOR8_AZ 0.0000
-param set-default CA_ROTOR8_KM -0.02
-param set-default CA_ROTOR8_CT 1.5
+param set-default CA_ROTOR8_KM -0.0
+param set-default CA_ROTOR8_CT 5
 
-param set-default CA_ROTOR9_PX -0.16
-param set-default CA_ROTOR9_PY -0.4
+param set-default CA_ROTOR9_PX -0.11
+param set-default CA_ROTOR9_PY -0.43
 param set-default CA_ROTOR9_PZ 0
 param set-default CA_ROTOR9_AX 0.0000
 param set-default CA_ROTOR9_AY 1.0000
 param set-default CA_ROTOR9_AZ 0.0000
-param set-default CA_ROTOR9_KM 0.02
-param set-default CA_ROTOR9_CT 1.5
+param set-default CA_ROTOR9_KM 0.0
+param set-default CA_ROTOR9_CT 5
 
-param set-default CA_ROTOR10_PX 0.1
-param set-default CA_ROTOR10_PY -0.35
+param set-default CA_ROTOR10_PX 0.12
+param set-default CA_ROTOR10_PY -0.28
 param set-default CA_ROTOR10_PZ 0
 param set-default CA_ROTOR10_AX 0.0000
 param set-default CA_ROTOR10_AY 1.0000
 param set-default CA_ROTOR10_AZ 0.0000
-param set-default CA_ROTOR10_KM -0.02
-param set-default CA_ROTOR10_CT 1.5
+param set-default CA_ROTOR10_KM -0.0
+param set-default CA_ROTOR10_CT 5
 
-param set-default CA_ROTOR11_PX 0.1
-param set-default CA_ROTOR11_PY 0.35
+param set-default CA_ROTOR11_PX 0.12
+param set-default CA_ROTOR11_PY 0.28
 param set-default CA_ROTOR11_PZ 0
 param set-default CA_ROTOR11_AX 0.0000
 param set-default CA_ROTOR11_AY -1.0000
 param set-default CA_ROTOR11_AZ 0.0000
-param set-default CA_ROTOR11_KM -0.02
-param set-default CA_ROTOR11_CT 1.5
+param set-default CA_ROTOR11_KM -0.0
+param set-default CA_ROTOR11_CT 5
 
 
