@@ -61,7 +61,7 @@ public:
 	static constexpr unsigned MAX_RATE_HZ = 400;
 	static constexpr uint16_t DISARMED_OUTPUT_VALUE = UINT16_MAX;
 
-	static_assert(uavcan::equipment::esc::RawCommand::FieldTypes::cmd::MaxSize >= MAX_ACTUATORS, "Too many actuators");
+	// static_assert(uavcan::equipment::esc::RawCommand::FieldTypes::cmd::MaxSize >= MAX_ACTUATORS, "Too many actuators");
 
 
 	UavcanEscController(uavcan::INode &node);

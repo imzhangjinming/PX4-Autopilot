@@ -45,6 +45,7 @@
 
 #include <matrix/matrix/math.hpp>
 #include <uORB/topics/control_allocator_status.h>
+#include <drivers/drv_pwm_output.h>
 
 enum class AllocationMethod {
 	NONE = -1,
@@ -73,7 +74,7 @@ public:
 	ActuatorEffectiveness() = default;
 	virtual ~ActuatorEffectiveness() = default;
 
-	static constexpr int NUM_ACTUATORS = 16;
+	static constexpr int NUM_ACTUATORS = PWM_OUTPUT_MAX_CHANNELS;
 	static constexpr int NUM_AXES = 6;
 
 	enum ControlAxis {

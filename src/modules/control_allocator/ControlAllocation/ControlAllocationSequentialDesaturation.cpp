@@ -210,6 +210,20 @@ ControlAllocationSequentialDesaturation::mixYaw()
 	ActuatorVector yaw;
 	ActuatorVector thrust_z;
 
+	// _mix(12,  ControlAxis::THRUST_Z) = _mix(0, ControlAxis::THRUST_Z);
+	// _mix(13,  ControlAxis::THRUST_Z) = _mix(0, ControlAxis::THRUST_Z);
+	// _mix(14,  ControlAxis::THRUST_Z) = _mix(0, ControlAxis::THRUST_Z);
+	// _mix(15,  ControlAxis::THRUST_Z) = _mix(0, ControlAxis::THRUST_Z);
+	// _mix(16, ControlAxis::THRUST_Z) = _mix(0, ControlAxis::THRUST_Z);
+	// _mix(17, ControlAxis::THRUST_Z) = _mix(0, ControlAxis::THRUST_Z);
+
+	// _mix(6,  ControlAxis::YAW) = 1;
+	// _mix(7,  ControlAxis::YAW) = 1;
+	// _mix(8,  ControlAxis::YAW) = -1;
+	// _mix(9,  ControlAxis::YAW) = -1;
+	// _mix(10, ControlAxis::YAW) = 1;
+	// _mix(11, ControlAxis::YAW) = -1;
+
 	for (int i = 0; i < _num_actuators; i++) {
 		_actuator_sp(i) += _mix(i, ControlAxis::YAW) * (_control_sp(ControlAxis::YAW) - _control_trim(ControlAxis::YAW));
 		yaw(i) = _mix(i, ControlAxis::YAW);
